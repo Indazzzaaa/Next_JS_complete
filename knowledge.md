@@ -158,7 +158,7 @@ Few HTTP methods
 - Download sql community version
 - Download jetbrains dataGrip to see our database.
 - npm i prisma
-- npx prisma init : to initialize prisma in our project
+- npx prisma init : to initialize prisma in our project( this time it will ask for the database name .)
 - change connection string according to database you are using in .env file and also add that file in .gitignore.
 - Define your model(eg.User : name will always start wil first letter capital.) in the `schema.prisma` file .
 - To format the code we define in our above file type : `npx prisma format`
@@ -166,3 +166,21 @@ Few HTTP methods
 - So as we define or change our model we have to create migrations this will help to database schema to be in sync with prisma schema. `npx prisma migrate dev`  for mong : `npx prisma db push`
 - Go to datagrip : connect to my sql (by providing creds and database name) and below click on test-connection to validate whether everything is okay or not.
 - To work with our database first we have to create a prisma client, go in prisma folder and add file `client.ts` . Best practices to instantiate prisma client `https://www.prisma.io/docs/guides/other/troubleshooting-orm/help-articles/nextjs-prisma-client-dev-practices`
+
+##### Important commands 
+
+```
+# Setting up prisma
+npx prisma init
+
+#Formatting Prisma schema file so it look good in tabulor form
+npx prisma format
+
+#creating and running a migration
+npx prisma migrate dev
+
+#Quick Fix : When I created the product model it was sync with database as soon as migration but scripts does not recognized it for that I have used this command before that I have stopped the server:
+	npx prisma generate 
+	npx prisma db push 
+
+```
