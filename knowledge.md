@@ -120,8 +120,7 @@ Node js help us to create component which are rendered at server side.
 - If some error occur in our produciton app it;s good to log somether eg `senerty website` so we can see what happend, now sometime we want to give users to retry in that case use parameter `reset` in propos and provide button to call it.Don't use retry techinque generally other wise it will bolt our error log just in certain part of our application.
 - We simulated error my breacking the url endpoint of `json-place-holder`.
 
-# 
-    Creating APIs
+  Creating APIs
 
 Will be creating APIs for
 
@@ -146,14 +145,11 @@ Few HTTP methods
 
 `note` : serach few status code like , 200,201,400,404
 
-
-# 
     Database Integration with Prisma
 
 - `what is it` : This is ORM library for databases.
 
 ### Steps to configure database
-
 
 - Download sql community version
 - Download jetbrains dataGrip to see our database.
@@ -167,7 +163,7 @@ Few HTTP methods
 - Go to datagrip : connect to my sql (by providing creds and database name) and below click on test-connection to validate whether everything is okay or not.
 - To work with our database first we have to create a prisma client, go in prisma folder and add file `client.ts` . Best practices to instantiate prisma client `https://www.prisma.io/docs/guides/other/troubleshooting-orm/help-articles/nextjs-prisma-client-dev-practices`
 
-##### Important commands 
+##### Important commands
 
 ```
 # Setting up prisma
@@ -185,13 +181,11 @@ npx prisma migrate dev
 
 ```
 
-
-# 
     Uploading Files
 
 `note` : for uploading files we would need cloud providers eg. Amazon S3, Google Cloud,Microsoft Azure, Cloudinary, we would go with last one `Cloudinary` since it provides many react compoenet to wrok easier. `https://console.cloudinary.com/`  , `npm i next-cloudinary`
 
-- To know more about : `https://next.cloudinary.dev/` 
+- To know more about : `https://next.cloudinary.dev/`
 
 ##### Steps
 
@@ -204,10 +198,7 @@ npx prisma migrate dev
 
   `note` : cloudnary provides options to fully customized it's upload page please read the documentation for more. to do it go to `demo.cloudinary.com/uw/#/` and customize it there , and then go to source (now source is in js , but the property you see there will apply to component we can copy those and use it.)
 
-
-# 
-    Authentication with Next Auth
-
+  Authentication with Next Auth
 - Setting Up Next Auth
 - Configuring the Google Provider
 - Authentication Sessions
@@ -219,3 +210,77 @@ npx prisma migrate dev
 
 - To setup authentication go to : `next-auth.js.org` in future it is going to be `auth.js`
 - Go to it's Getting started page to find how to setup which module to setup
+- Create two environment variable `NEXTAUTH_URL=http://localhost:3000 NEXTAUTH_SECRET=4MbFj82RXAyu7tVhMLyG2Zhw1uUPyOBiWUq5Q1pl5zo=`
+- To generate the `NEXTAUTH_SECRET` I have used the `random.js` in `scratch` directory.
+
+#### Configure the providers
+
+- more info at : `https://next-auth.js.org/configuration/initialization#route-handlers-app` go to providers section
+- Refer any Video on how to setup .
+- Now we have to add env variables `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` and which we will get from google.
+- Now setup the handler file and make sure to end `!` in the end of variable so that typescript sure that we are providing those variables otherwise it will show us error.
+
+#### Something about tokens
+
+- When the user logs in next-auth creates a authentication session for that user ,  by default it represt that token as json web token , which you can see by going in browser->application->cookies. default expiry of that token is 30days.We also call this token JWT.
+- Cookies : this is piece of information that is transefered between user and server each time user makes request.
+- We just created the test api just to see the content encoded in  token you don't have to do that : `http://localhost:3000/api/auth/token`
+  `note` : we have created the directory for auth as `api/auth/[...nextauth]` so whever we find the `api/auth/signout` or signin ,it will hadle by this auth itself
+- We can always customize the way signIn or signOut page looks.
+
+#### Middleware
+
+- This will help us to protect our api routes ,with middleware we can run the code before the request is completed.
+- Make sure to use the name : middleware.ts and put in same leve as your app directory is.
+
+  ```
+  export { default } from 'next-auth/middleware'; 
+  export const config = {
+      // * : zero or more
+      // + :  one or more
+      // ?  : zero or one
+      matcher: ['/users/:id*']
+  }
+  ```
+
+#### Database Adapters
+
+- Since we are able to login via google , now we have to store the users in our database so we can know which are our users. For more `https://next-auth.js.org/adapters`
+- Install the prisma adapter (don't use the way mention in website it mentioned in way of auth.js we are using next-auth) : `npm i @next-auth/prisma-adapter`
+- We have to delete old table we created while testing and copy the tables schema from website prisma section.
+- As soon as we include the database adapters our Next-auth will change authentication from JWT to database , for that we have to provide extra parameter , after the providers parameter.
+  ```
+  session: {
+          strategy: "jwt"
+      }
+  ```
+
+    `note` : if we don't use social login like google in our case then we have to handle . 1. store passwords in encrypted way in our database , we have to implement functionality to user to register,to change the pasword and reset the password and so , luckily this all is handled by social login or oauth providers. 
+
+now if you really want to do those step then go to this link how we can do that : this is Providers->credentials `https://next-auth.js.org/providers/credentials `
+
+`Advice` : go with the social providers that will help us to deal with extra burden and security risk of managing the credentials.
+
+#### Custom Credential Matching
+
+- install package to encrypt our password : `npm i bcrypt`
+- And as dev dependencies  install : `npm i -D @types/bcrypt` so we can have suggestion while typing
+- We have added `CredentaialsProvider` in `authOptions`.
+- We have added optional password field in the user table
+- Also we can customize the look and feel of the credential page we see.
+
+##### Additional Reading
+
+- We can replace autogenrated login and logout pages with our custom ones. `https://next-auth.js.org/configuration/pages`
+- NextAuth.js provides a number of events (eg. signIn, signOut,createUser etc) : `https://next-auth.js.org/configuration/events`
+- We can also provide handlers for these events as part of our NextAuth.js setup L `https://next-auth.js.org/configuration/options#events`
+
+##### Exercises
+
+- Configure another OAuth provider, such as GitHub or Twitter.
+- Create a custom registeration form that captures user's name , email and password.Make sure these values are stored in the database.
+- Create a change password page.Make sure it's only accessible to logged in users.
+
+
+# 
+    Sending Emails
