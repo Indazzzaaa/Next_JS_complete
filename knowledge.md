@@ -184,3 +184,38 @@ npx prisma migrate dev
 	npx prisma db push 
 
 ```
+
+
+# 
+    Uploading Files
+
+`note` : for uploading files we would need cloud providers eg. Amazon S3, Google Cloud,Microsoft Azure, Cloudinary, we would go with last one `Cloudinary` since it provides many react compoenet to wrok easier. `https://console.cloudinary.com/`  , `npm i next-cloudinary`
+
+- To know more about : `https://next.cloudinary.dev/` 
+
+##### Steps
+
+- register to cloudnary if don't have account
+- install npm package : `npm i next-cloudinary`
+- follow the installation instruction from : `https://next.cloudinary.dev/`
+- to get upload preset info got to => `https://console.cloudinary.com/` => Settings(bottom left small icon) => Product environment settings `Upload` => click on add upload preset => copy the name and change sign mode to unsign (makes easier to use while testing ). In the end put the name of upload preset in the parameter of the CldUploadWidget component.
+
+  - Once we upload any image then go to console=>Media Library => assests.
+
+  `note` : cloudnary provides options to fully customized it's upload page please read the documentation for more. to do it go to `demo.cloudinary.com/uw/#/` and customize it there , and then go to source (now source is in js , but the property you see there will apply to component we can copy those and use it.)
+
+
+# 
+    Authentication with Next Auth
+
+- Setting Up Next Auth
+- Configuring the Google Provider
+- Authentication Sessions
+- Protecting routes
+- Database adapters
+- Configuring the credentials Provider
+
+### Start
+
+- To setup authentication go to : `next-auth.js.org` in future it is going to be `auth.js`
+- Go to it's Getting started page to find how to setup which module to setup
