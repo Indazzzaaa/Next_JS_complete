@@ -120,7 +120,6 @@ Node js help us to create component which are rendered at server side.
 - If some error occur in our produciton app it;s good to log somether eg `senerty website` so we can see what happend, now sometime we want to give users to retry in that case use parameter `reset` in propos and provide button to call it.Don't use retry techinque generally other wise it will bolt our error log just in certain part of our application.
 - We simulated error my breacking the url endpoint of `json-place-holder`.
 
-
 # 
     Creating APIs
 
@@ -144,3 +143,26 @@ Few HTTP methods
 - We used validaiton library ZOD : `https://zod.dev/ `(npm i zod) please read the doc of it for more information.
 
 `note` Please refer file in dir : `app/admin/route.tsx`  and `app/admin/[id]/route.tsx` to see the implementation of the apis.
+
+`note` : serach few status code like , 200,201,400,404
+
+
+# 
+    Database Integration with Prisma
+
+- `what is it` : This is ORM library for databases.
+
+### Steps to configure database
+
+
+- Download sql community version
+- Download jetbrains dataGrip to see our database.
+- npm i prisma
+- npx prisma init : to initialize prisma in our project
+- change connection string according to database you are using in .env file and also add that file in .gitignore.
+- Define your model(eg.User : name will always start wil first letter capital.) in the `schema.prisma` file .
+- To format the code we define in our above file type : `npx prisma format`
+- `how to define more complex models` : `https://prisma.io/docs/concepts/components/prisma-schema/data-model`
+- So as we define or change our model we have to create migrations this will help to database schema to be in sync with prisma schema. `npx prisma migrate dev`  for mong : `npx prisma db push`
+- Go to datagrip : connect to my sql (by providing creds and database name) and below click on test-connection to validate whether everything is okay or not.
+- To work with our database first we have to create a prisma client, go in prisma folder and add file `client.ts` . Best practices to instantiate prisma client `https://www.prisma.io/docs/guides/other/troubleshooting-orm/help-articles/nextjs-prisma-client-dev-practices`
