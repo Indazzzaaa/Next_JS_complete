@@ -14,6 +14,8 @@ Node js help us to create component which are rendered at server side.
 - Maintain State
 - Use effects
 
+`create-project` : npx create-next-app@latest
+
 `Conclusion` : in realworl we often use mixture of server and client components , we should default to server components and use client compoent only we absolutely need them.
 
 `app-directory :` all components by default in this folder is server component.So will rendered on the server only.
@@ -249,13 +251,14 @@ npx prisma migrate dev
 - Install the prisma adapter (don't use the way mention in website it mentioned in way of auth.js we are using next-auth) : `npm i @next-auth/prisma-adapter`
 - We have to delete old table we created while testing and copy the tables schema from website prisma section.
 - As soon as we include the database adapters our Next-auth will change authentication from JWT to database , for that we have to provide extra parameter , after the providers parameter.
+
   ```
   session: {
           strategy: "jwt"
       }
   ```
 
-    `note` : if we don't use social login like google in our case then we have to handle . 1. store passwords in encrypted way in our database , we have to implement functionality to user to register,to change the pasword and reset the password and so , luckily this all is handled by social login or oauth providers. 
+  `note` : if we don't use social login like google in our case then we have to handle . 1. store passwords in encrypted way in our database , we have to implement functionality to user to register,to change the pasword and reset the password and so , luckily this all is handled by social login or oauth providers.
 
 now if you really want to do those step then go to this link how we can do that : this is Providers->credentials `https://next-auth.js.org/providers/credentials `
 
@@ -281,6 +284,112 @@ now if you really want to do those step then go to this link how we can do that 
 - Create a custom registeration form that captures user's name , email and password.Make sure these values are stored in the database.
 - Create a change password page.Make sure it's only accessible to logged in users.
 
-
 # 
     Sending Emails
+
+- Use this libray : `https://react.email/` which will help us to create , see email easily.
+- npm i react-email  @react-email/components
+- Add this to .gitignore : `.react-email/`  because while preview this will create many junk files which are use less and can be regenrated using `npm run preview-email`.
+- Add this to package.json script section `"preview-email": "email dev -p 3030`
+- after we have created the welcome template file in emails folder then run : above command and go to port 3030 to see result.
+- We know two to style our component for the email , one with normal style other is tailwind
+- Now we opt for service which will help to sent mail in our behalf. `https://resend.com/` and create api key and paste in .env file with name `RESEND_API_KEY`
+- Install this package : `npm i resend@1.0.0`
+- Final step create-api end point for sending emails (it just for testing how to test it , in real world no api end point should be exposed to sent emails.)
+- **Just see how to do with google or something , because it would require custom domain, see how we configured api in `app/api/send-email/route.tsx` and how we configured the template for sending emails on `./emails/WelcomeTemplate`**
+
+
+# 
+    Optimizations
+
+- Optimizing Images
+- Using third-party JS libraries
+- Using custom fonts
+- Search engine optimization
+- Lazy loading
+
+##### 1. Images
+
+- Put all the images in public folder
+- Always use the image compoent that provided by next js , does following things , a. Compress the images according the screen size it going to server(which next-js detect automtaically) and it also offer verious options to style it.
+- By default next-js uses lazy loading , means images won't be served from server until it going to server in viewport.if don't want that use `priorit` prop in the component.
+- If you want to use image from url then there is some configuration please watch the next documentation on that.
+
+##### 2. Adding third party Libraries : eg. Google Analytics
+
+- watch these steps : `https://nextjs.org/docs/messages/next-script-for-ga`
+- **IMPORTANT : always put google analytics as top as possible so that it can used on entire app eg. first componet of body . app/layout.tsx**
+
+##### 3. Using Fonts
+
+- We experiment with Roboto in file `/app/layout` what next js will is , it will download the font with all specified weight at once while we build our web app first time.Then server that one for each request.
+- That is simple but what about the local fonts. it is also simple  , go in public and put your font file there and import it and define the object of it as we defined for `Roboto` font we have used.
+- How about the registering custom  font using tailwind : see document.
+
+##### 4. Serach Engine Optimizations
+
+- There when ever we export metadata object from layout or page file , next js automatically include that in head section.And search engine look for these meta tags for index our contents.So to make our website search engine friendly make sure that every page has proper meta-tags.
+- Normal metadata object is straight forward to create , but what about those where person click on shoes and we are fetching information about that , for that use below code. Make sure don't change the name `generateMetadata`
+  ```
+  export async function generateMetadata(): Promise<Metadata>{
+  const product = await fetch('...')
+  return {
+  	title: product.title,
+  	description: product.description,
+           .....
+
+  }
+
+  }
+  ```
+
+##### 5. Lazy Loading
+
+- This is strategy of loading client components or third party libraries in the future when we need them typically as a result of user interaction ( like : user clicks the button, or scroll beyond a certain points)
+- Use cases a like , there is some compoenets have some rich text editor or having lot's of code.
+- Let's simulate the loading of heavy compoent from click on a button.Also it does not make sense to load small component as lazy . Because page size would not get effected any way so only prefer for large pages.
+
+  ```
+  import dynamic form "next/dynamic";
+  const HeavyComponent= dynamic(()=> import('./components/HeavyComponent'),
+  	{ 
+  	 ssr: false, // to disable pre render on server ( uscase: we use browser api which is not available on server so that will throw an eror which is not good.)
+  	 loading:() => <p>Loading...</p>}
+  )
+
+
+  .....
+
+  const [visible,setVisible] = useState(false);
+  <button onClick={()->setVisible(true)}> Show </button>
+  {isVisible && <HeavyComponent/>}
+
+
+
+  ... 
+  ```
+- we can also dynamically import the modules , so that it won't go with our page and only when user clicks the button or something then only.
+- ```
+  // install lodash and npm i -D @type/lodash also 
+  // this library provides utility funciton to work with our collections
+  <button onClick = {async ()=>{
+  	const _ = (await import('lodash)).default;
+  	const users = [ {name: 'c'} , {name: 'a'} ,{name: 'b'}  ]
+  	const sorted = _.orderBy(users,['name']);
+  	console.log(sorted)
+  }}
+  ```
+
+# 
+    Deployment
+
+
+- Before we deploy our application first we should build it locally , so we can detect any error ahead of time.	`npm run build`
+- We encounter error , we have exported authOptions from route file, which is not google route file should only export get , post , ... types only ,  Resolution : we puth auth options in another seprate file.
+- And another eror : later we deleted product table from our scheme and but in our api we are using it to retrive the data , so for that it gave us error.
+- Once build succes , then push everything to github.
+- Then depoly on any of these paltforms (vercel ,aws, google cloud platform , Heroku and so on.)Out of all these vercel is fastest and safest way to deploy any next js applications.it's same company  which build the next-js.
+- Also every time we push our code to github vercel will download it and run build on it (good right.) and if there is any build error it will show up there too.But it always adviced first to build locally then to push, on main branch.
+- We would also requre the mysql hosting for our database on cloud , we can use services provided by (Digital Ocean, Google Cloud Platform , MS Azure , Hostinger , GoDaddy)
+- We also used cloudinar for uploading our upload feature , we used dev name , we have to use production name just go in there and see it.
+- `advice` : always have different set of keys for developement and produciton environment , and always keep production keys to a different safe place , so that if anyone get access to our system won't be able to steal it.
