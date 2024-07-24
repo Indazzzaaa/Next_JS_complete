@@ -1,4 +1,4 @@
-Node js help us to create component which are rendered at server side.
+Next js help us to create component which are rendered at server side.
 
 [ Pros ]
 
